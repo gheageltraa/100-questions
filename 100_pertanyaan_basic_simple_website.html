@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDKT Game – 100 Pertanyaan</title>
+  <style>
+    :root {
+      --bg: #f5f6fa;
+      --card: #ffffff;
+      --text: #2f3640;
+      --accent: #6c5ce7;
+    }
+    body.dark {
+      --bg: #1e1e2f;
+      --card: #2a2a3d;
+      --text: #f1f1f1;
+      --accent: #a29bfe;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: 0.3s;
+    }
+    h1 {
+      text-align: center;
+      margin-top: 10px;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 16px;
+    }
+    .card {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    button {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      font-size: 14px;
+    }
+    button:hover { opacity: 0.9; }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .question-box {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+    .numbers {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .num {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 10px 0;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: 0.2s;
+    }
+    .num:hover {
+      transform: scale(1.05);
+      background: var(--accent);
+      color: white;
+    }
+    footer {
+      text-align: center;
+      font-size: 13px;
+      opacity: 0.7;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💬 PDKT Game – 100 Pertanyaan</h1>
+
+    <div class="card controls">
+      <button onclick="randomQuestion()">🎲 Acak Pertanyaan</button>
+      <button onclick="toggleDark()">🌙 / ☀️ Dark Mode</button>
+    </div>
+
+    <div class="card">
+      <div id="question" class="question-box">Klik tombol atau pilih angka 1–100</div>
+    </div>
+
+    <div class="card">
+      <h3>Pilih Angka</h3>
+      <div class="numbers" id="numbers"></div>
+    </div>
+
+    <footer>Made with ❤️ | HTML • CSS • JavaScript</footer>
+  </div>
+
+  <script>
+    const questions = [
+      "Warna favorit apa?","Makanan favorit apa?","Minuman favorit apa?","Snack favorit apa?","Buah favorit apa?",
+      "Dessert favorit apa?","Es krim rasa favorit apa?","Kopi atau teh?","Manis atau asin?","Pedas atau nggak pedas?",
+      "Pagi atau malam?","Hujan atau panas?","Pantai atau gunung?","Liburan santai atau jalan-jalan?","Di rumah atau keluar?",
+      "Nonton atau dengerin musik?","Musik lokal atau luar negeri?","Lagu galau atau upbeat?","Film atau series?","Genre film favorit apa?",
+      "Drama atau action?","Komedi atau horor?","Nonton sendiri atau rame-rame?","Bioskop atau streaming?","Buku fisik atau e-book?",
+      "Novel atau komik?","Belajar/kerja siang atau malam?","Sunyi atau rame?","Chat atau telpon?","Voice note atau teks?",
+      "Spontan atau terencana?","Jalan jauh atau dekat?","Motor atau mobil?","Jalan kaki atau naik kendaraan?","Olahraga atau rebahan?",
+      "Workout pagi atau sore?","Indoor atau outdoor activity?","Masak atau beli?","Makan bareng atau sendiri?","Coba makanan baru atau aman?",
+      "Manis atau pahit?","Simple atau ribet?","Casual atau rapi?","Hitam atau putih?","Jeans atau kain?",
+      "Sepatu atau sandal?","Tas besar atau kecil?","Aksesoris atau polos?","Parfum manis atau fresh?","Wangi soft atau strong?",
+      "Bangun pagi gampang atau susah?","Tidur cepat atau begadang?","Alarm sekali atau berkali-kali?","Kamar terang atau redup?","AC atau kipas?",
+      "Selimut tebal atau tipis?","Lampu putih atau kuning?","Meja rapi atau berantakan?","Dicicil atau kebut?","Fokus satu atau multitasking?",
+      "Dengerin atau cerita?","Introvert atau extrovert vibes?","Suka foto atau jarang?","Post story atau jarang posting?","Aktif sosmed atau seperlunya?",
+      "Balas chat cepat atau santai?","Ngobrol serius atau santai?","Humor receh atau datar?","Suka surprise atau nggak?","Plan dadakan atau jauh hari?",
+      "Hadiah kecil atau pengalaman?","Ulang tahun dirayain atau biasa?","Malam minggu atau hari biasa?","Nongkrong kafe atau rumah?","Minum dingin atau hangat?",
+      "Sarapan atau skip?","Asin atau gurih?","Nasi atau mie?","Ayam atau ikan?","Goreng atau rebus?",
+      "Coba hal baru atau rutinitas?","Kerja sendiri atau tim?","Detail atau garis besar?","Kata-kata atau tindakan?","Headset atau speaker?",
+      "Playlist random atau satu genre?","Suka hujan atau nggak?","Pakai jam tangan atau nggak?","Catatan digital atau tulis tangan?","Kalender fisik atau HP?",
+      "Warna cerah atau netral?","Foto candid atau pose?","Pagi cerah atau malam tenang?","Air putih atau minuman lain?","Suka keramaian atau cepat capek?",
+      "Denger cerita orang atau sharing sendiri?","Estetik atau fungsional?","Nyaman atau stylish?","Kejutan kecil atau konsisten?","Hal sederhana apa yang paling kamu suka?"
+    ];
+
+    const questionEl = document.getElementById('question');
+    const numbersEl = document.getElementById('numbers');
+
+    questions.forEach((q, i) => {
+      const div = document.createElement('div');
+      div.className = 'num';
+      div.innerText = i + 1;
+      div.onclick = () => questionEl.innerText = (i + 1) + '. ' + q;
+      numbersEl.appendChild(div);
+    });
+
+    function randomQuestion() {
+      const i = Math.floor(Math.random() * questions.length);
+      questionEl.innerText = (i + 1) + '. ' + questions[i];
+    }
+
+    function toggleDark() {
+      document.body.classList.toggle('dark');
+    }
+  </script>
+</body>
+</html>
